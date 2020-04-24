@@ -2,10 +2,14 @@
   "name": "discord-gateway",
   "version": "1.0.0",
   "description": "Connects to discord server and coverts fires HTTP events REST APIs behind the gateway",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "winston": "^3.2.1"
+  }
 }
