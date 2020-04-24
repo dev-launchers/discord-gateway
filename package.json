@@ -1,0 +1,11 @@
+{
+  "name": "discord-gateway",
+  "version": "1.0.0",
+  "description": "Connects to discord server and coverts fires HTTP events REST APIs behind the gateway",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
