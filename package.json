@@ -4,6 +4,7 @@
   "description": "Connects to discord server and coverts fires HTTP events REST APIs behind the gateway",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
