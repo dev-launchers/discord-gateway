@@ -10,7 +10,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.19.2",
     "discord.js": "^12.2.0",
+    "js-yaml": "^3.13.1",
     "winston": "^3.2.1"
   }
 }

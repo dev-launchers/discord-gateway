@@ -1,6 +1,10 @@
-const Discord = require('discord.js');
-const winston = require('winston');
 const axios = require('axios').default;
+const Discord = require('discord.js');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const winston = require('winston');
+
+const config = yaml.safeLoad(fs.readFileSync('./config.yaml', 'utf8'));
 
 const logger = winston.createLogger({
     level: 'info',
@@ -25,7 +29,7 @@ client.on('message', msg => {
         return
     }
 
-    const backendClient = new WorkerClient(process.env.WORKER_URL, logger);
+    const backendClient = new BackendClient(config.backendUrl, config.backendToken, logger);
     switch (msgs[0]) {
         case 'submit':
             backendClient.submit(msg, msgs[1]);
@@ -38,12 +42,13 @@ client.on('message', msg => {
     }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(config.discordToken);
 
-class WorkerClient {
-    constructor(backendURL, logger) {
+class BackendClient {
+    constructor(backendURL, backendToken, logger) {
         this.url = backendURL;
-        this.logger = logger
+        this.backendToken = backendToken;
+        this.logger = logger;
     }
 
     submit(msg, submission) {
