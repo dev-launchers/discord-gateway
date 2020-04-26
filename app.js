@@ -47,32 +47,39 @@ client.login(config.discordToken);
 class BackendClient {
     constructor(backendURL, backendToken, logger) {
         this.url = backendURL;
-        this.backendToken = backendToken;
+        this.defaultReqConfig = {
+            headers: {
+                "Authorization": `Bearer ${backendToken}`,
+            },
+        }
         this.logger = logger;
     }
 
     submit(msg, submission) {
         const submitter = msg.author;
-        axios.post(`${this.url}/submit/discord/${submitter.id}`, {
+        const body = {
             "submission": submission,
             "ts": msg.createdTimestamp,
-        }).then(resp => {
-            // Backend returns text data to reply to user
-            msg.reply(resp.data)
-            this.logger.info(`${submitter.username} submits ${submission}, result ${resp.data}`)
-        }).catch(err => {
-            msg.reply(`Submission failed, please try again or find someone to fix me X_X.`)
-            this.logger.error(`Submission for ${submitter.username} failed, err ${err}`)
-        })
+        };
+
+        axios.post(`${this.url}/submit/discord/${submitter.id}`, body, this.defaultReqConfig)
+            .then(resp => {
+                // Backend returns text data to reply to user
+                msg.reply(resp.data)
+                this.logger.info(`${submitter.username} submits ${submission}, result ${resp.data}`)
+            }).catch(err => {
+                msg.reply(`Submission failed, please try again or find someone to fix me X_X.`)
+                this.logger.error(`Submission for ${submitter.username} failed, err ${err}`)
+            })
     };
 
     checkLastSubmission(msg) {
-        axios.get(`${this.url}/submit/discord/last/${submitter.id}`)
+        const submitter = msg.author;
+        axios.get(`${this.url}/submit/discord/last/${submitter.id}`, this.defaultReqConfig)
             .then(resp => {
                 msg.reply(`last submission is ${resp.data}`);
                 this.logger.info(`${submitter.username} last submission is ${submission}`);
-            })
-            .catch(err => {
+            }).catch(err => {
                 msg.reply(`Check last submission failed, please try again or find someone to fix me X_X.`);
                 this.logger.error(`Last submission for ${submitter.username} failed, err ${err}`);
             })
