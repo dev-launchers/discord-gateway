@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const winston = require('winston');
+const axios = require('axios').default;
 
 const logger = winston.createLogger({
     level: 'info',
@@ -46,11 +47,30 @@ class WorkerClient {
     }
 
     submit(msg, submission) {
-        this.logger.info(`${msg.author} submits ${submission}`)
+        const submitter = msg.author;
+        axios.post(`${this.url}/submit/discord/${submitter.id}`, {
+            "submission": submission,
+            "ts": msg.createdTimestamp,
+        }).then(resp => {
+            // Backend returns text data to reply to user
+            msg.reply(resp.data)
+            this.logger.info(`${submitter.username} submits ${submission}, result ${resp.data}`)
+        }).catch(err => {
+            msg.reply(`Submission failed, please try again or find someone to fix me X_X.`)
+            this.logger.error(`Submission for ${submitter.username} failed, err ${err}`)
+        })
     };
 
     checkLastSubmission(msg) {
-        this.logger.info(`${msg.author} ask for last submission`)
+        axios.get(`${this.url}/submit/discord/last/${submitter.id}`)
+            .then(resp => {
+                msg.reply(`last submission is ${resp.data}`);
+                this.logger.info(`${submitter.username} last submission is ${submission}`);
+            })
+            .catch(err => {
+                msg.reply(`Check last submission failed, please try again or find someone to fix me X_X.`);
+                this.logger.error(`Last submission for ${submitter.username} failed, err ${err}`);
+            })
     };
 }
 
