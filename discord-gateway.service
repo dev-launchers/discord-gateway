@@ -1,0 +1,11 @@
+[Unit]
+Description=Discord Gateway
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+WorkingDirectory=/home/devlaunchers/apps
+
+[Install]
+WantedBy=multi-user.target 
