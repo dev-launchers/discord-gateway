@@ -18,11 +18,13 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
+    if (!msg.mentions.has(client.user)) {
+        return
+    }
     // Ignore bot messages to prevent infinite conversation 
     if (msg.author.bot) {
         return
     }
-
     let msgs = msg.content.split(' ')
     if (msgs.length === 0) {
         logger.info(`no message`)
@@ -31,10 +33,10 @@ client.on('message', msg => {
 
     const backendClient = new BackendClient(config.backendUrl, config.backendToken, logger);
     switch (msgs[0]) {
-        case 'submit':
+        case 'submit!':
             backendClient.submit(msg, msgs[1]);
             break;
-        case 'last':
+        case 'last!':
             backendClient.checkLastSubmission(msg);
             break;
         default:
@@ -77,8 +79,8 @@ class BackendClient {
         const submitter = msg.author;
         axios.get(`${this.url}/submit/discord/last/${submitter.id}`, this.defaultReqConfig)
             .then(resp => {
-                msg.reply(`last submission is ${resp.data}`);
-                this.logger.info(`${submitter.username} last submission is ${submission}`);
+                msg.reply(resp.data);
+                this.logger.info(`${submitter.username} ${resp.data}`);
             }).catch(err => {
                 msg.reply(`Check last submission failed, please try again or find someone to fix me X_X.`);
                 this.logger.error(`Last submission for ${submitter.username} failed, err ${err}`);
@@ -87,8 +89,8 @@ class BackendClient {
 }
 
 function help(clientMsg) {
-    clientMsg.reply(`I am very disciplined! I will only talk to you if you follow these rules!\n
-    1. To submit your guess, say submit followed by your guess <> \n
-    2. To query your previous guesses, say last \n
+    clientMsg.reply(`I am very disciplined! I will only talk to you if you mention me and follow these rules!\n
+    1. To submit your guess, say submit! followed by your guess \n
+    2. To query your previous guesses, say last! \n
     `)
 }
