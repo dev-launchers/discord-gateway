@@ -1,0 +1,4 @@
+  
+namespace: discord-gateway
+bases:
+  - ./workload
