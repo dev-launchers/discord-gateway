@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: discord-gateway
+  name: discord-gateway
+  labels:
+    app: discord-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-gateway
+  template:
+    metadata:
+      labels:
+        app: discord-gateway
+    spec:
+      containers:
+      - name: discord-gateway
+        image: devlaunchers/discord-gateway:latest
+        env:
+        - name: DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-gateway
+              key: discord-token
+        - name: BACKEND_URL
+          valueFrom:
+            secretKeyRef:
+              name: discord-gateway
+              key: backend-url
+        - name: BACKEND_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-gateway
+              key: backend-token
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
