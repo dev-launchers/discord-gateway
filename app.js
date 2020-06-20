@@ -1,13 +1,17 @@
 const axios = require("axios").default;
+const express = require('express');
+const promClient = require('prom-client');
 const Discord = require("discord.js");
-const fs = require("fs");
-const yaml = require("js-yaml");
 const winston = require("winston");
 
 const logger = winston.createLogger({
     level: "info",
     format: winston.format.json()
 });
+
+const metrics = registerMetrics()
+
+startMetricsServer(metrics);
 
 const client = new Discord.Client();
 
@@ -35,11 +39,14 @@ client.on("message", msg => {
         process.env.BACKEND_TOKEN,
         logger
     );
-    switch (msgs[0]) {
+
+    switch (msgs[1]) {
         case "submit!":
+            metrics.commandCount.inc({ command: "submit" });
             backendClient.submit(msg, msgs[1]);
             break;
         case "last!":
+            metrics.commandCount.inc({ command: "last" });
             backendClient.checkLastSubmission(msg);
             break;
         default:
@@ -110,6 +117,36 @@ class BackendClient {
                 );
             });
     }
+}
+
+function registerMetrics() {
+    const collectDefaultMetrics = promClient.collectDefaultMetrics;
+    const Registry = promClient.Registry;
+    const register = new Registry();
+    collectDefaultMetrics({ register });
+    const commandCount = new promClient.Counter({
+        name: 'command_count',
+        help: 'Count of commands called by users',
+        labelNames: ['command'],
+    });
+    register.registerMetric(commandCount);
+    return {
+        register: register,
+        commandCount: commandCount,
+    }
+}
+
+function startMetricsServer(metrics) {
+    const server = express();
+    server.get('/metrics', (req, res) => {
+        res.set('Content-Type', metrics.register.contentType);
+        res.end(metrics.register.metrics());
+    });
+
+    const port = process.env.PORT;
+    logger.info(`Metrics server listening to ${port}, metrics exposed on /metrics endpoint`);
+    server.listen(port);
+
 }
 
 function help(clientMsg) {
