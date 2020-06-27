@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: discord-gateway
-        image: devlaunchers/discord-gateway:latest
+        image: devlaunchers/discord-gateway:sha-c3976e4
         env:
         - name: DISCORD_TOKEN
           valueFrom:
