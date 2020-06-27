@@ -1,5 +1,9 @@
 - name: Build and push Docker images
   uses: docker/build-push-action@v1.1.0
+  on:
+    push:
+      branches:
+        - master
   with:
     username: ${{ secrets.DOCKER_USERNAME }}
     password: ${{ secrets.DOCKER_PASSWORD }}
