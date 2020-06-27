@@ -1,0 +1,14 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-gateway
+  namespace: discord-gateway
+spec:
+  template:
+    spec:
+      $setElementOrder/containers:
+      - name: discord-gateway
+      containers:
+      - image: devlaunchers/discord-gateway:master-master
+        name: discord-gateway
