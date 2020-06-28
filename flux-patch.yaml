@@ -10,5 +10,5 @@ spec:
       $setElementOrder/containers:
       - name: discord-gateway
       containers:
-      - image: devlaunchers/discord-gateway:sha-69583be
+      - image: devlaunchers/discord-gateway:sha-4fbf328
         name: discord-gateway
