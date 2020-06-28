@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   namespace: discord-gateway
   name: discord-gateway
-  annotations:
-    fluxcd.io/automated: "true"
   labels:
     app: discord-gateway
 spec:
