@@ -1,8 +1,9 @@
 name: publish
 on:
   push:
-    tags-ignore:
-      - flux*
+    # Don't build new image if the commit is tagged by flux*
+    tags:
+      - '!flux*'
     branches:
       - master
 jobs:
