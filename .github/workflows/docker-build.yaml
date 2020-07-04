@@ -1,9 +1,11 @@
 name: publish
 on:
   push:
-    # Don't build new image if the commit is tagged by flux*
-    tags:
-      - '!flux*'
+    # Only rebuild image if application code is updated, ignore changes to kubernetes
+    # configs. This will prevent a commit from flux to upgrade image version from triggering
+    # a build
+    paths:
+      - 'app.js'
     branches:
       - master
 jobs:
