@@ -37,7 +37,8 @@ client.on("message", msg => {
     const backendClient = new BackendClient(
         process.env.BACKEND_URL,
         process.env.BACKEND_TOKEN,
-        logger
+        logger,
+        metrics,
     );
 
     switch (msgs[1]) {
@@ -57,7 +58,7 @@ client.on("message", msg => {
 client.login(process.env.DISCORD_TOKEN);
 
 class BackendClient {
-    constructor(backendURL, backendToken, logger) {
+    constructor(backendURL, backendToken, logger, metrics) {
         this.url = backendURL;
         this.defaultReqConfig = {
             headers: {
@@ -65,6 +66,7 @@ class BackendClient {
             }
         };
         this.logger = logger;
+        this.metrics = metrics;
     }
 
     submit(msg, submission) {
@@ -88,6 +90,7 @@ class BackendClient {
                 );
             })
             .catch(err => {
+                this.metrics.errorCount.inc();
                 msg.reply(
                     `Submission failed, please try again or find someone to fix me X_X.`
                 );
@@ -109,6 +112,7 @@ class BackendClient {
                 this.logger.info(`${submitter.username} ${resp.data}`);
             })
             .catch(err => {
+                this.metrics.errorCount.inc();
                 msg.reply(
                     `Check last submission failed, please try again or find someone to fix me X_X.`
                 );
@@ -129,10 +133,16 @@ function registerMetrics() {
         help: 'Count of commands called by users',
         labelNames: ['command'],
     });
+    const errorCount = new promClient.Counter({
+        name: 'error_count',
+        help: 'Count of errors',
+    });
     register.registerMetric(commandCount);
+    register.registerMetric(errorCount);
     return {
         register: register,
         commandCount: commandCount,
+        errorCount: errorCount,
     }
 }
 
