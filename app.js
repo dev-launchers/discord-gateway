@@ -44,7 +44,7 @@ client.on("message", msg => {
     switch (msgs[1]) {
         case "submit!":
             metrics.commandCount.inc({ command: "submit" });
-            backendClient.submit(msg, msgs[1]);
+            backendClient.submit(msg, msgs[2]);
             break;
         case "last!":
             metrics.commandCount.inc({ command: "last" });
