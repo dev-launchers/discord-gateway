@@ -55,9 +55,9 @@ spec:
           periodSeconds: 10
           failureThreshold: 5
         volumeMounts:
-          - name: quickdb-persistent-storage
+          - name: discord-gateway-volume
             mountPath: /usr/src/app/json.sqlite
       volumes:
-        - name: project-discord-bot-storage
+        - name: discord-gateway-volume
           persistentVolumeClaim:
-            claimName: project-discord-bot-pv-claim
+            claimName: discord-gateway-pv-claim
